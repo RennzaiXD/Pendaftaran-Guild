@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYZEN ID – Pendaftaran Anggota</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #FFD700;
+      --gold2: #FFA500;
+      --red: #C0392B;
+      --dark: #0a0800;
+      --panel: rgba(20,15,0,0.88);
+      --border: rgba(255,200,0,0.22);
+      --text: #f5e6c0;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--dark);
+      font-family: 'Exo 2', sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    #fire-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255,140,0,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(255,200,0,0.05) 0%, transparent 80%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px 70px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 22px 0 0;
+    }
+
+    .logo-circle {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 2.5px solid var(--gold);
+      box-shadow: 0 0 18px var(--gold2), 0 0 40px rgba(255,165,0,0.3);
+      overflow: hidden; flex-shrink: 0;
+      background: #1a1200;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-circle img { width: 100%; height: 100%; object-fit: contain; }
+    .logo-lion { width: 56px; height: 56px; }
+
+    .header-text .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.7rem; font-weight: 900;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 60%, #FF6B00 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1; letter-spacing: 2px;
+    }
+    .header-text .sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem; letter-spacing: 4px;
+      color: var(--red); font-weight: 600; margin-top: 3px;
+    }
+
+    .badge-active {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(150,30,20,0.5);
+      border: 1px solid rgba(200,50,30,0.5);
+      border-radius: 20px; padding: 5px 14px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.72rem; letter-spacing: 2px;
+      color: #ff8070; font-weight: 600;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #ff4444; box-shadow: 0 0 8px #ff4444;
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+      margin: 20px 0; opacity: 0.4;
+    }
+
+    .page-title { text-align: center; margin-bottom: 28px; }
+    .page-title h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      letter-spacing: 5px; color: var(--gold);
+    }
+    .page-title p {
+      font-size: 0.78rem; color: rgba(245,230,192,0.45);
+      letter-spacing: 2px; margin-top: 4px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 28px 26px;
+      position: relative; backdrop-filter: blur(8px);
+    }
+    .panel::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 4px; padding: 1px;
+      background: linear-gradient(135deg, rgba(255,200,0,0.3), transparent 50%, rgba(255,100,0,0.15));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .corner {
+      position: absolute; width: 16px; height: 16px;
+      border-color: var(--gold); border-style: solid; opacity: 0.6;
+    }
+    .corner.tl{top:-1px;left:-1px;border-width:2px 0 0 2px}
+    .corner.tr{top:-1px;right:-1px;border-width:2px 2px 0 0}
+    .corner.bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px}
+    .corner.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 22px; }
+
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 22px;
+    }
+    .field-row .field { margin-bottom: 0; }
+
+    .field-label {
+      display: block;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.73rem; letter-spacing: 3px;
+      color: var(--gold2); font-weight: 600;
+      margin-bottom: 8px; text-transform: uppercase;
+    }
+    .field-label .opt {
+      color: rgba(245,230,192,0.35);
+      font-size: 0.65rem; letter-spacing: 1px;
+      font-weight: 400; text-transform: none; margin-left: 6px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: rgba(255,200,0,0.04);
+      border: 1px solid rgba(255,180,0,0.2);
+      border-radius: 3px; color: var(--text);
+      font-family: 'Exo 2', sans-serif; font-size: 0.92rem;
+      padding: 10px 13px; outline: none;
+      transition: border-color .3s, box-shadow .3s, background .3s;
+    }
+    input[type="text"]::placeholder, textarea::placeholder {
+      color: rgba(245,230,192,0.2); font-size: 0.83rem;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: rgba(255,200,0,0.55);
+      background: rgba(255,200,0,0.07);
+      box-shadow: 0 0 14px rgba(255,180,0,0.1);
+    }
+    textarea { resize: none; min-height: 68px; line-height: 1.5; }
+
+    .warn-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.68rem; letter-spacing: 1px;
+      color: #ff6b40; margin-top: 7px; line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 5px;
+    }
+    .warn-text::before { content: '⚠'; flex-shrink: 0; }
+
+    /* ── ROLE GRID ── */
+    .role-label-top {
+      display: block;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.73rem; letter-spacing: 3px;
+      color: var(--gold2); font-weight: 600;
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+
+    .role-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 6px;
+    }
+
+    .role-check { display: none; }
+    .role-check + label {
+      background: rgba(255,200,0,0.04);
+      border: 1px solid rgba(255,180,0,0.18);
+      border-radius: 3px; padding: 9px 6px;
+      text-align: center; cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem; letter-spacing: 1.5px;
+      color: rgba(245,230,192,0.5);
+      transition: all 0.2s; line-height: 1.4;
+      user-select: none; display: block;
+    }
+    .role-check:checked + label {
+      border-color: var(--gold);
+      background: rgba(255,200,0,0.13);
+      color: var(--gold);
+      box-shadow: 0 0 10px rgba(255,180,0,0.15);
+    }
+    .role-hint {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.65rem; letter-spacing: 1px;
+      color: rgba(245,230,192,0.3); margin-top: 5px;
+    }
+
+    /* ── RANK GRID ── */
+    .rank-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .rank-opt { display: none; }
+    .rank-opt + label {
+      background: rgba(255,200,0,0.04);
+      border: 1px solid rgba(255,180,0,0.18);
+      border-radius: 3px; padding: 9px 4px;
+      text-align: center; cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.64rem; letter-spacing: 1px;
+      color: rgba(245,230,192,0.5);
+      transition: all 0.2s; line-height: 1.4;
+      user-select: none; display: block;
+    }
+    .rank-opt:checked + label {
+      border-color: var(--gold);
+      background: rgba(255,200,0,0.13);
+      color: var(--gold);
+      box-shadow: 0 0 10px rgba(255,180,0,0.15);
+    }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%; margin-top: 10px; padding: 14px;
+      background: linear-gradient(135deg, #8B6B00, #FFD700 50%, #FF8C00);
+      border: none; border-radius: 3px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 4px; color: #0a0800;
+      cursor: pointer; text-transform: uppercase;
+      position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,165,0,0.25);
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,165,0,0.4); }
+    .btn-submit:hover::after { transform: translateX(100%); }
+    .btn-submit:active { transform: translateY(0); }
+
+    /* ── LOADING ── */
+    #loading-screen { display: none; }
+    .spinner-ring {
+      width: 76px; height: 76px; border-radius: 50%;
+      border: 3px solid rgba(255,200,0,0.1);
+      border-top-color: var(--gold); border-right-color: var(--gold2);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 26px;
+      box-shadow: 0 0 20px rgba(255,180,0,0.2);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-msg {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem; letter-spacing: 3px;
+      color: var(--gold); font-weight: 600;
+      min-height: 52px; display: flex;
+      align-items: center; justify-content: center;
+      text-align: center; line-height: 1.6;
+      transition: opacity 0.35s;
+      white-space: pre-line;
+    }
+    .loading-bar {
+      width: 200px; height: 3px;
+      background: rgba(255,200,0,0.1);
+      border-radius: 2px; margin: 18px auto 0; overflow: hidden;
+    }
+    .loading-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--gold2), var(--gold));
+      border-radius: 2px; transition: width .3s linear;
+      box-shadow: 0 0 8px var(--gold2);
+    }
+
+    /* ── RESULT ── */
+    #result-screen { display: none; }
+    .result-header { text-align: center; margin-bottom: 22px; }
+    .result-header .check { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+    .result-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.88rem; letter-spacing: 4px; color: var(--gold);
+    }
+    .result-header p {
+      font-size: 0.76rem; color: rgba(245,230,192,0.4);
+      letter-spacing: 1px; margin-top: 6px;
+    }
+
+    .result-card {
+      background: rgba(10,8,0,0.92);
+      border: 1px solid rgba(255,200,0,0.35);
+      border-radius: 4px; padding: 22px;
+      box-shadow: 0 0 30px rgba(255,150,0,0.1);
+    }
+    .result-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,200,0,0.08);
+      gap: 14px;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-key {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.68rem; letter-spacing: 2.5px;
+      color: rgba(245,230,192,0.4); font-weight: 600;
+      text-transform: uppercase; flex-shrink: 0;
+    }
+    .result-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.92rem; font-weight: 700;
+      color: var(--gold); letter-spacing: 1px; text-align: right;
+    }
+    .result-val.secret {
+      color: rgba(245,230,192,0.3); font-style: italic;
+      font-size: 0.78rem; letter-spacing: 2px;
+    }
+
+    .notice-box {
+      margin-top: 18px;
+      border: 1px solid rgba(255,100,30,0.35);
+      border-radius: 3px; padding: 14px 16px; text-align: center;
+      animation: flash-border 2s ease-in-out infinite;
+    }
+    .notice-box .notice-icon { font-size: 1.3rem; display: block; margin-bottom: 6px; }
+    .notice-box p {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.76rem; letter-spacing: 1.5px;
+      color: rgba(245,230,192,0.55); line-height: 1.65;
+    }
+    .notice-box p strong { color: var(--gold2); font-weight: 700; }
+    @keyframes flash-border {
+      0%,100%{border-color:rgba(255,100,30,0.35)}
+      50%{border-color:rgba(255,200,0,0.65);box-shadow:0 0 14px rgba(255,200,0,0.18)}
+    }
+
+    @media (max-width: 500px) {
+  .panel { padding: 20px 14px; }
+  .field-row { grid-template-columns: 1fr; }
+  .rank-grid { grid-template-columns: repeat(3, 1fr); }
+  .role-grid { grid-template-columns: repeat(2, 1fr); }
+  .header-text .brand { font-size: 1.35rem; }
+}
+
+.error-msg {
+  color: #ff4444;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+}
+.error-msg.show { display: block; }
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px 0 30px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: rgba(245,230,192,0.25);
+  line-height: 1.8;
+}
+
+footer span {
+  color: var(--gold2);
+  font-weight: 700;
+}
+  </style>
+</head>
+<body>
+
+<canvas id="fire-canvas"></canvas>
+<div class="bg-glow"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-circle">
+
+    <img src="SYZENID.png" alt="SYZEN ID Logo"/>
+    
+    </div>
+
+    <div class="header-text">
+      <span class="brand">SYZEN ID</span>
+      <span class="sub">MOBILE LEGENDS · INDONESIA</span>
+    </div>
+
+    <div class="badge-active">
+      <span class="badge-dot"></span>
+      ACTIVE
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- ── FORM ── -->
+  <div id="form-screen">
+    <div class="page-title">
+      <h1>Pendaftaran Anggota</h1>
+      <p>SQUAD KOMPETITIF · SYZEN ID</p>
+    </div>
+
+    <div class="panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <!-- Nama Asli + Nickname -->
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="f-nama-asli">Nama Asli</label>
+          <input type="text" id="f-nama-asli" placeholder="Nama, Bukan nama panjang" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-nickname">Nickname Game</label>
+          <input type="text" id="f-nickname" placeholder="Username in-game" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Role Multi Pilih -->
+      <div class="field">
+        <span class="role-label-top">Role yang Bisa Dimainkan</span>
+        <div class="role-grid">
+          <input type="checkbox" id="cb-goldlane" class="role-check" value="Gold Lane">
+          <label for="cb-goldlane">🏹<br>Gold Lane</label>
+
+          <input type="checkbox" id="cb-explaner" class="role-check" value="Exp Lane">
+          <label for="cb-explaner">⚔️<br>Exp Lane</label>
+
+          <input type="checkbox" id="cb-midlane" class="role-check" value="Mid Lane">
+          <label for="cb-midlane">🔮<br>Mid Lane</label>
+
+          <input type="checkbox" id="cb-roam" class="role-check" value="Roam">
+          <label for="cb-roam">🛡️<br>Roam</label>
+
+          <input type="checkbox" id="cb-jungler" class="role-check" value="Jungler">
+          <label for="cb-jungler">🥷<br>Jungler</label>
+
+          <input type="checkbox" id="cb-allrole" class="role-check" value="ALL">
+          <label for="cb-allrole">⭐<br>All Role</label>
+        </div>
+        <div class="role-hint">💡 Bisa pilih lebih dari satu &nbsp;·&nbsp; Centang semua = tampil "All Role"</div>
+      </div>
+
+      <!-- Rank -->
+      <div class="field">
+        <label class="field-label">Rank Tertinggi</label>
+        <div class="rank-grid">
+          <input type="radio" name="rank" id="r-epic"     value="Epic"            class="rank-opt"><label for="r-epic">🦏<br>Epic</label>
+          <input type="radio" name="rank" id="r-legend"   value="Legend"          class="rank-opt"><label for="r-legend">🦁<br>Legend</label>
+          <input type="radio" name="rank" id="r-mythic"   value="Mythic"          class="rank-opt"><label for="r-mythic">👑<br>Mythic</label>
+          <input type="radio" name="rank" id="r-Honor"   value="Mythic Honor"          class="rank-opt"><label for="r-Honor">🏅<br>M. Honor</label>
+          <input type="radio" name="rank" id="r-glory"    value="Mythic Glory"    class="rank-opt"><label for="r-glory">🏆<br>M. Glory</label>
+          <input type="radio" name="rank" id="r-immortal" value="Mythic Immortal" class="rank-opt"><label for="r-immortal">🌟<br>M. Immortal</label>
+        </div>
+      </div>
+
+      <!-- ID ML Opsional -->
+      <div class="field">
+        <label class="field-label" for="f-id">ID Mobile Legends <span class="opt">(Opsional), Saran admin masukan saja.</span></label>
+        <input type="text" id="f-id" placeholder="Masukkan ID kamu (tidak wajib)" autocomplete="off" inputmode="numeric" />
+      </div>
+
+      <!-- Hero Favorite -->
+      <div class="field">
+        <label class="field-label" for="f-hero">Hero Favorite</label>
+        <textarea id="f-hero" placeholder="Contoh: Fanny, Gusion, Lancelot, Chou ..."></textarea>
+        <div class="warn-text">Jangan asal / dari game lain atau tidak konfirmasi — auto ditolak!</div>
+      </div>
+
+      <button class="btn-submit" onclick="submitForm()">SUBMIT PENDAFTARAN</button>
+      <div class="error-msg" id="err-msg">⚠ Lengkapi semua field yang wajib diisi!</div>
+    </div>
+  </div>
+
+  <!-- ── LOADING ── -->
+  <div id="loading-screen">
+    <div class="panel" style="text-align:center; padding:52px 28px;">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="spinner-ring"></div>
+      <div class="loading-msg" id="loading-msg">SEDANG DIPROSES</div>
+      <div class="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="result-screen">
+    <div class="result-header">
+      <span class="check">✅</span>
+      <h2>PENDAFTARAN BERHASIL</h2>
+      <p>Screenshot halaman ini lalu kirim ke Owner SYZEN ID via WhatsApp</p>
+    </div>
+
+    <div class="panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <div class="result-card">
+        <div class="result-row">
+          <span class="result-key">Nama Asli</span>
+          <span class="result-val" id="res-nama">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Nickname</span>
+          <span class="result-val" id="res-nick">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Role</span>
+          <span class="result-val" id="res-role">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Rank Tertinggi</span>
+          <span class="result-val" id="res-rank">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">ML ID</span>
+          <span class="result-val" id="res-id">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Hero Favorite</span>
+          <span class="result-val" id="res-hero">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice-box">
+      <span class="notice-icon">📸</span>
+      <p>
+        <strong>Screenshot formulir kamu diatas & baca intruksi ini!</strong><br>
+        Kirim ke Owner SYZEN ID via WhatsApp dan tunggu konfirmasi.<br>
+        Kamu akan dihubungi jika pendaftaran diterima/ditolak.
+        Kalau kamu diterima kamu akan diarahkan untuk melakukan TRIAL ke yang bertugas, Sebelum anda resmi menjadi anggota SYZEN ID!
+         <br>
+        Pastikan Anda masukan formulir anda dengan fakta/jujur, Kalau ada yang tidak benar maka pendaftaran anda ditolak!
+         <br>
+        Jika ditolak kamu terkena cooldown (tidak bisa mendaftar) selama 1 minggu, Jika mengulanginya lagi akan menjadi 1 bulan! dst (Dan Seterusnya).
+         <br>
+        Kami kasih kesempatan 3× untuk mendaftar ulang jika lebih dari lebih 3× kalian akan mendapatkan cooldown!
+      </p>
+    </div>
+  </div>
+
+</div>
+</div><!-- /Copyright -->
+
+<footer>
+  <p>© 2025 - 2026 SYZEN ID · All Rights Reserved</p>
+  <p>Made by <span>RennzaiXD</span></p>
+</footer>
+<script>
+/* ─── FIRE PARTICLES ─── */
+(function(){
+  const canvas = document.getElementById('fire-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+
+  class P {
+    constructor(){ this.reset(true); }
+    reset(init){
+      this.x  = Math.random()*W;
+      this.y  = init ? Math.random()*H : H+10+Math.random()*30;
+      this.vy = -(0.4+Math.random()*1.3);
+      this.vx = (Math.random()-.5)*.4;
+      this.r  = 1.2+Math.random()*2.8;
+      this.life=0; this.maxLife=80+Math.random()*120;
+      const t=Math.random();
+      if(t<.5){this.h=20+Math.random()*15;this.s=100;this.l=55;}
+      else if(t<.8){this.h=45+Math.random()*15;this.s=100;this.l=62;}
+      else{this.h=50+Math.random()*10;this.s=90;this.l=80;}
+    }
+    update(){
+      this.life++; this.y+=this.vy; this.x+=this.vx+Math.sin(this.life*.08)*.3;
+      this.vy*=.994;
+      if(this.life>this.maxLife||this.y<-20) this.reset(false);
+    }
+    draw(){
+      const pr=this.life/this.maxLife;
+      const a=pr<.15?pr/.15:1-((pr-.15)/.85);
+      const g=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r*2.5);
+      g.addColorStop(0,`hsla(${this.h},${this.s}%,${this.l}%,${a})`);
+      g.addColorStop(.5,`hsla(${this.h-10},${this.s}%,${this.l-10}%,${a*.5})`);
+      g.addColorStop(1,`hsla(${this.h-20},90%,40%,0)`);
+      ctx.save(); ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r*2.5,0,Math.PI*2); ctx.fill(); ctx.restore();
+    }
+  }
+
+  resize();
+  for(let i=0;i<120;i++) particles.push(new P());
+  (function loop(){ ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); })();
+  window.addEventListener('resize', resize);
+})();
+
+/* ─── ROLE LOGIC ─── */
+const LANE_IDS = ['cb-goldlane','cb-explaner','cb-midlane','cb-roam','cb-jungler'];
+const cbAll    = document.getElementById('cb-allrole');
+
+// Centang "All Role" → centang semua lane
+cbAll.addEventListener('change', function(){
+  LANE_IDS.forEach(id => document.getElementById(id).checked = this.checked);
+});
+
+// Salah satu lane berubah → cek apakah semua sudah tercentang
+LANE_IDS.forEach(id => {
+  document.getElementById(id).addEventListener('change', function(){
+    cbAll.checked = LANE_IDS.every(i => document.getElementById(i).checked);
+  });
+});
+
+function getRoleString(){
+  // Kalau semua lane tercentang ATAU cb-allrole tercentang → All Role
+  const isAll = cbAll.checked || LANE_IDS.every(id => document.getElementById(id).checked);
+  if(isAll) return 'All Role';
+
+  const picked = LANE_IDS
+    .filter(id => document.getElementById(id).checked)
+    .map(id => document.getElementById(id).value);
+
+  return picked.length > 0 ? picked.join(' / ') : null;
+}
+
+/* ─── SUBMIT ─── */
+function submitForm(){
+  const namaAsli = document.getElementById('f-nama-asli').value.trim();
+  const nickname = document.getElementById('f-nickname').value.trim();
+  const role     = getRoleString();
+  const rankEl   = document.querySelector('input[name="rank"]:checked');
+  const mlid     = document.getElementById('f-id').value.trim();
+  const hero     = document.getElementById('f-hero').value.trim();
+
+  const errEl = document.getElementById('err-msg');
+
+if(!namaAsli || !nickname || !role || !rankEl || !hero){
+  errEl.textContent = !namaAsli ? '⚠ Nama asli wajib diisi!' :
+                      !nickname ? '⚠  Nickname game wajib diisi!' :
+                      !role     ? '⚠ Pilih minimal satu role!' :
+                      !rankEl   ? '⚠ Pilih rank tertinggi kamu!' :
+                                  '⚠ Tulis hero favorite kamu!';
+  errEl.classList.add('show');
+  return;
+}
+errEl.classList.remove('show');
+  // Sembunyikan form, tampilkan loading
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('loading-screen').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  const msgs   = ['SEDANG DIPROSES', 'SCREENSHOT FORMULIR\nSETELAH PROSES SELESAI!'];
+  let msgIdx   = 0;
+  const msgEl  = document.getElementById('loading-msg');
+  const fillEl = document.getElementById('loading-fill');
+
+  const msgTimer = setInterval(()=>{
+    msgIdx = (msgIdx+1)%msgs.length;
+    msgEl.style.opacity = '0';
+    setTimeout(()=>{ msgEl.textContent=msgs[msgIdx]; msgEl.style.opacity='1'; }, 260);
+  }, 1800);
+
+  let elapsed = 0;
+  const barTimer = setInterval(()=>{
+    elapsed += 100;
+    fillEl.style.width = Math.min((elapsed/10000)*100, 100)+'%';
+    if(elapsed >= 10000){
+      clearInterval(barTimer); clearInterval(msgTimer);
+      showResult(namaAsli, nickname, role, rankEl.value, mlid, hero);
+    }
+  }, 100);
+}
+
+/* ─── SHOW RESULT ─── */
+function showResult(namaAsli, nickname, role, rank, mlid, hero){
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display  = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  document.getElementById('res-nama').textContent = namaAsli;
+  document.getElementById('res-nick').textContent = nickname;
+  document.getElementById('res-role').textContent = role;
+  document.getElementById('res-rank').textContent = rank;
+  document.getElementById('res-hero').textContent = hero;
+
+  const resId = document.getElementById('res-id');
+  if(mlid){
+  resId.textContent = mlid;
+  resId.className = 'result-val';
+} else {
+  resId.textContent = '🔒 Secret';
+  resId.className = 'result-val secret';
+}
+}
+</script>
+</body>
+</html>
