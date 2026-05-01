@@ -63,7 +63,6 @@
       display: flex; align-items: center; justify-content: center;
     }
     .logo-circle img { width: 100%; height: 100%; object-fit: contain; }
-    .logo-lion { width: 56px; height: 56px; }
 
     .header-text .brand {
       font-family: 'Orbitron', sans-serif;
@@ -303,6 +302,272 @@
       box-shadow: 0 0 8px var(--gold2);
     }
 
+    /* ── POPUP OVERLAY ── */
+    .popup-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.82);
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .popup-overlay.show { display: flex; }
+
+    .popup-box {
+      background: rgba(16,12,0,0.97);
+      border: 1px solid rgba(255,200,0,0.45);
+      border-radius: 6px; padding: 38px 32px;
+      max-width: 380px; width: 90%;
+      text-align: center; position: relative;
+      box-shadow: 0 0 60px rgba(255,180,0,0.18), 0 0 120px rgba(255,100,0,0.08);
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .popup-box .corner { opacity: 0.7; }
+
+    .popup-icon { font-size: 2.8rem; display: block; margin-bottom: 14px; }
+    .popup-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 4px; color: var(--gold);
+      margin-bottom: 8px; line-height: 1.5;
+    }
+    .popup-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.78rem; letter-spacing: 2px;
+      color: rgba(245,230,192,0.45); line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .btn-kerjakan {
+      display: inline-block; padding: 13px 36px;
+      background: linear-gradient(135deg, #8B6B00, #FFD700 50%, #FF8C00);
+      border: none; border-radius: 3px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 4px; color: #0a0800;
+      cursor: pointer; text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,165,0,0.3);
+      position: relative; overflow: hidden;
+    }
+    .btn-kerjakan::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .btn-kerjakan:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,165,0,0.45); }
+    .btn-kerjakan:hover::after { transform: translateX(100%); }
+
+    /* ── QUIZ SCREEN ── */
+    #quiz-screen { display: none; }
+
+    .quiz-header { text-align: center; margin-bottom: 24px; }
+    .quiz-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 5px; color: var(--gold);
+    }
+    .quiz-header p {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.74rem; letter-spacing: 2px;
+      color: rgba(245,230,192,0.4); margin-top: 5px;
+    }
+
+    .quiz-progress-bar-wrap {
+      width: 100%; height: 4px;
+      background: rgba(255,200,0,0.1);
+      border-radius: 2px; margin-bottom: 22px; overflow: hidden;
+    }
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold2), var(--gold));
+      border-radius: 2px; transition: width .4s ease;
+      box-shadow: 0 0 8px var(--gold2);
+    }
+
+    .quiz-counter {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.72rem; letter-spacing: 3px;
+      color: rgba(245,230,192,0.35);
+      text-align: right; margin-bottom: 14px;
+    }
+
+    .question-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 24px 22px;
+      position: relative; backdrop-filter: blur(8px);
+      margin-bottom: 18px;
+    }
+    .question-panel::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 4px; padding: 1px;
+      background: linear-gradient(135deg, rgba(255,200,0,0.25), transparent 50%, rgba(255,100,0,0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+
+    .q-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem; letter-spacing: 3px;
+      color: var(--gold2); margin-bottom: 10px;
+    }
+    .q-text {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.92rem; font-weight: 600;
+      color: var(--text); line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .options-grid {
+      display: grid; gap: 8px;
+    }
+
+    .opt-radio { display: none; }
+    .opt-radio + label {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(255,200,0,0.03);
+      border: 1px solid rgba(255,180,0,0.16);
+      border-radius: 3px; padding: 10px 14px;
+      cursor: pointer; font-family: 'Exo 2', sans-serif;
+      font-size: 0.84rem; color: rgba(245,230,192,0.6);
+      transition: all 0.2s; line-height: 1.5;
+      user-select: none;
+    }
+    .opt-radio + label .opt-letter {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem; color: var(--gold2);
+      font-weight: 700; letter-spacing: 1px;
+      flex-shrink: 0; margin-top: 1px; min-width: 16px;
+    }
+    .opt-radio:checked + label {
+      border-color: var(--gold);
+      background: rgba(255,200,0,0.1);
+      color: var(--text);
+      box-shadow: 0 0 10px rgba(255,180,0,0.12);
+    }
+    .opt-radio:checked + label .opt-letter { color: var(--gold); }
+
+    /* Answer feedback states */
+    .opt-radio + label.correct {
+      border-color: #00ff88 !important;
+      background: rgba(0,255,136,0.1) !important;
+      color: #00ff88 !important;
+    }
+    .opt-radio + label.wrong {
+      border-color: #ff4444 !important;
+      background: rgba(255,68,68,0.1) !important;
+      color: #ff4444 !important;
+    }
+    .opt-radio + label.correct .opt-letter { color: #00ff88 !important; }
+    .opt-radio + label.wrong .opt-letter { color: #ff4444 !important; }
+
+    .btn-next-q {
+      width: 100%; padding: 12px;
+      background: linear-gradient(135deg, rgba(139,107,0,0.8), rgba(255,215,0,0.9) 50%, rgba(255,140,0,0.8));
+      border: none; border-radius: 3px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 4px; color: #0a0800;
+      cursor: pointer; text-transform: uppercase;
+      transition: all .2s; display: none;
+    }
+    .btn-next-q.show { display: block; }
+    .btn-next-q:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,165,0,0.35); }
+
+    .quiz-feedback {
+      text-align: center; font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem; letter-spacing: 2px;
+      margin-top: 10px; min-height: 22px;
+      display: none;
+    }
+    .quiz-feedback.correct-fb { color: #00ff88; display: block; }
+    .quiz-feedback.wrong-fb { color: #ff6b6b; display: block; }
+
+    /* ── QUIZ RESULT POPUP ── */
+    .score-popup-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.88);
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+    }
+    .score-popup-overlay.show { display: flex; }
+
+    .score-popup-box {
+      background: rgba(10,8,0,0.97);
+      border: 1px solid rgba(255,200,0,0.5);
+      border-radius: 6px; padding: 42px 36px;
+      max-width: 400px; width: 92%;
+      text-align: center; position: relative;
+      box-shadow: 0 0 80px rgba(255,180,0,0.2);
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+
+    .score-icon { font-size: 3rem; display: block; margin-bottom: 14px; }
+    .score-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.2rem; font-weight: 900;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .score-label-main {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: 4px; margin-bottom: 14px;
+      display: block;
+    }
+    .score-desc {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.8rem; color: rgba(245,230,192,0.45);
+      line-height: 1.6; margin-bottom: 28px;
+    }
+
+    /* Score color themes */
+    .score-buruk .score-num, .score-buruk .score-label-main { color: #ff4444; }
+    .score-buruk { border-color: rgba(255,68,68,0.5) !important; box-shadow: 0 0 60px rgba(255,68,68,0.15) !important; }
+
+    .score-ok .score-num, .score-ok .score-label-main { color: #2d8c4e; }
+    .score-ok { border-color: rgba(45,140,78,0.5) !important; box-shadow: 0 0 60px rgba(45,140,78,0.15) !important; }
+
+    .score-lumayan .score-num, .score-lumayan .score-label-main { color: #5edb85; }
+    .score-lumayan { border-color: rgba(94,219,133,0.5) !important; box-shadow: 0 0 60px rgba(94,219,133,0.15) !important; }
+
+    .score-pro .score-num { 
+      background: linear-gradient(135deg, #FFD700, #FFA500, #FFEC00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+    }
+    .score-pro .score-label-main {
+      background: linear-gradient(135deg, #FFD700, #FFA500, #FFEC00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 12px rgba(255,215,0,0.5));
+      animation: neon-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes neon-pulse {
+      0%,100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.9)) drop-shadow(0 0 40px rgba(255,165,0,0.4)); }
+    }
+    .score-pro { border-color: rgba(255,215,0,0.6) !important; box-shadow: 0 0 80px rgba(255,180,0,0.25) !important; }
+
+    .btn-selesai {
+      display: inline-block; padding: 13px 36px;
+      background: linear-gradient(135deg, #8B6B00, #FFD700 50%, #FF8C00);
+      border: none; border-radius: 3px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.76rem; font-weight: 700;
+      letter-spacing: 4px; color: #0a0800;
+      cursor: pointer; text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,165,0,0.3);
+    }
+    .btn-selesai:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,165,0,0.45); }
+
     /* ── RESULT ── */
     #result-screen { display: none; }
     .result-header { text-align: center; margin-bottom: 22px; }
@@ -345,6 +610,18 @@
       font-size: 0.78rem; letter-spacing: 2px;
     }
 
+    /* ── SKOR IN RESULT ── */
+    .result-val.skor-buruk { color: #ff4444; }
+    .result-val.skor-ok { color: #2d8c4e; }
+    .result-val.skor-lumayan { color: #5edb85; }
+    .result-val.skor-pro {
+      background: linear-gradient(135deg, #FFD700, #FFA500, #FFEC00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: neon-pulse 1.5s ease-in-out infinite;
+      font-size: 1rem;
+    }
+
     .notice-box {
       margin-top: 18px;
       border: 1px solid rgba(255,100,30,0.35);
@@ -363,40 +640,45 @@
       50%{border-color:rgba(255,200,0,0.65);box-shadow:0 0 14px rgba(255,200,0,0.18)}
     }
 
+    /* ── CONFETTI (for Pro Player) ── */
+    .confetti-wrap {
+      position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute; width: 8px; height: 8px;
+      border-radius: 2px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
     @media (max-width: 500px) {
-  .panel { padding: 20px 14px; }
-  .field-row { grid-template-columns: 1fr; }
-  .rank-grid { grid-template-columns: repeat(3, 1fr); }
-  .role-grid { grid-template-columns: repeat(2, 1fr); }
-  .header-text .brand { font-size: 1.35rem; }
-}
+      .panel { padding: 20px 14px; }
+      .field-row { grid-template-columns: 1fr; }
+      .rank-grid { grid-template-columns: repeat(3, 1fr); }
+      .role-grid { grid-template-columns: repeat(2, 1fr); }
+      .header-text .brand { font-size: 1.35rem; }
+      .popup-box, .score-popup-box { padding: 28px 20px; }
+    }
 
-.error-msg {
-  color: #ff4444;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 1.5px;
-  margin-top: 10px;
-  text-align: center;
-  display: none;
-}
-.error-msg.show { display: block; }
-footer {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 20px 0 30px;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  color: rgba(245,230,192,0.25);
-  line-height: 1.8;
-}
+    .error-msg {
+      color: #ff4444;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.78rem; letter-spacing: 1.5px;
+      margin-top: 10px; text-align: center; display: none;
+    }
+    .error-msg.show { display: block; }
 
-footer span {
-  color: var(--gold2);
-  font-weight: 700;
-}
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 20px 0 30px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem; letter-spacing: 2px;
+      color: rgba(245,230,192,0.25); line-height: 1.8;
+    }
+    footer span { color: var(--gold2); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -404,21 +686,48 @@ footer span {
 <canvas id="fire-canvas"></canvas>
 <div class="bg-glow"></div>
 
+<!-- POPUP: Tinggal Selangkah Lagi -->
+<div class="popup-overlay" id="popup-quiz">
+  <div class="popup-box">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="popup-icon">⚡</span>
+    <div class="popup-title">TINGGAL SELANGKAH LAGI!</div>
+    <div class="popup-sub">
+      Kerjakan soal pengetahuan Mobile Legends berikut.<br>
+      Hasilnya akan tercatat di formulir pendaftaranmu.
+    </div>
+    <button class="btn-kerjakan" onclick="startQuiz()">KERJAKAN</button>
+  </div>
+</div>
+
+<!-- POPUP: Score Result -->
+<div class="score-popup-overlay" id="score-popup">
+  <div class="score-popup-box" id="score-popup-box">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="score-icon" id="score-icon">🏆</span>
+    <div class="score-num" id="score-num">0</div>
+    <span class="score-label-main" id="score-label">—</span>
+    <div class="score-desc" id="score-desc">—</div>
+    <button class="btn-selesai" onclick="finishQuiz()">LIHAT HASIL PENDAFTARAN</button>
+  </div>
+</div>
+
+<!-- Confetti container -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
 <div class="wrapper">
 
   <!-- HEADER -->
   <header>
     <div class="logo-circle">
-
-    <img src="SYZENID.png" alt="SYZEN ID Logo"/>
-    
+      <img src="SYZENID.png" alt="SYZEN ID Logo"/>
     </div>
-
     <div class="header-text">
       <span class="brand">SYZEN ID</span>
       <span class="sub">MOBILE LEGENDS · INDONESIA</span>
     </div>
-
     <div class="badge-active">
       <span class="badge-dot"></span>
       ACTIVE
@@ -427,7 +736,7 @@ footer span {
 
   <div class="divider"></div>
 
-  <!-- ── FORM ── -->
+  <!-- ── FORM SCREEN ── -->
   <div id="form-screen">
     <div class="page-title">
       <h1>Pendaftaran Anggota</h1>
@@ -438,7 +747,6 @@ footer span {
       <span class="corner tl"></span><span class="corner tr"></span>
       <span class="corner bl"></span><span class="corner br"></span>
 
-      <!-- Nama Asli + Nickname -->
       <div class="field-row">
         <div class="field">
           <label class="field-label" for="f-nama-asli">Nama Asli</label>
@@ -450,51 +758,42 @@ footer span {
         </div>
       </div>
 
-      <!-- Role Multi Pilih -->
       <div class="field">
         <span class="role-label-top">Role yang Bisa Dimainkan</span>
         <div class="role-grid">
           <input type="checkbox" id="cb-goldlane" class="role-check" value="Gold Lane">
           <label for="cb-goldlane">🏹<br>Gold Lane</label>
-
           <input type="checkbox" id="cb-explaner" class="role-check" value="Exp Lane">
           <label for="cb-explaner">⚔️<br>Exp Lane</label>
-
           <input type="checkbox" id="cb-midlane" class="role-check" value="Mid Lane">
           <label for="cb-midlane">🔮<br>Mid Lane</label>
-
           <input type="checkbox" id="cb-roam" class="role-check" value="Roam">
           <label for="cb-roam">🛡️<br>Roam</label>
-
           <input type="checkbox" id="cb-jungler" class="role-check" value="Jungler">
           <label for="cb-jungler">🥷<br>Jungler</label>
-
           <input type="checkbox" id="cb-allrole" class="role-check" value="ALL">
           <label for="cb-allrole">⭐<br>All Role</label>
         </div>
         <div class="role-hint">💡 Bisa pilih lebih dari satu &nbsp;·&nbsp; Centang semua = tampil "All Role"</div>
       </div>
 
-      <!-- Rank -->
       <div class="field">
         <label class="field-label">Rank Tertinggi</label>
         <div class="rank-grid">
           <input type="radio" name="rank" id="r-epic"     value="Epic"            class="rank-opt"><label for="r-epic">🦏<br>Epic</label>
           <input type="radio" name="rank" id="r-legend"   value="Legend"          class="rank-opt"><label for="r-legend">🦁<br>Legend</label>
           <input type="radio" name="rank" id="r-mythic"   value="Mythic"          class="rank-opt"><label for="r-mythic">👑<br>Mythic</label>
-          <input type="radio" name="rank" id="r-Honor"   value="Mythic Honor"          class="rank-opt"><label for="r-Honor">🏅<br>M. Honor</label>
+          <input type="radio" name="rank" id="r-Honor"    value="Mythic Honor"    class="rank-opt"><label for="r-Honor">🏅<br>M. Honor</label>
           <input type="radio" name="rank" id="r-glory"    value="Mythic Glory"    class="rank-opt"><label for="r-glory">🏆<br>M. Glory</label>
           <input type="radio" name="rank" id="r-immortal" value="Mythic Immortal" class="rank-opt"><label for="r-immortal">🌟<br>M. Immortal</label>
         </div>
       </div>
 
-      <!-- ID ML Opsional -->
       <div class="field">
         <label class="field-label" for="f-id">ID Mobile Legends <span class="opt">(Opsional), Saran admin masukan saja.</span></label>
         <input type="text" id="f-id" placeholder="Masukkan ID kamu (tidak wajib)" autocomplete="off" inputmode="numeric" />
       </div>
 
-      <!-- Hero Favorite -->
       <div class="field">
         <label class="field-label" for="f-hero">Hero Favorite</label>
         <textarea id="f-hero" placeholder="Contoh: Fanny, Gusion, Lancelot, Chou ..."></textarea>
@@ -506,7 +805,7 @@ footer span {
     </div>
   </div>
 
-  <!-- ── LOADING ── -->
+  <!-- ── LOADING SCREEN ── -->
   <div id="loading-screen">
     <div class="panel" style="text-align:center; padding:52px 28px;">
       <span class="corner tl"></span><span class="corner tr"></span>
@@ -517,7 +816,32 @@ footer span {
     </div>
   </div>
 
-  <!-- ── RESULT ── -->
+  <!-- ── QUIZ SCREEN ── -->
+  <div id="quiz-screen">
+    <div class="quiz-header">
+      <h1>UJI PENGETAHUAN ML</h1>
+      <p>SYZEN ID · KNOWLEDGE TEST</p>
+    </div>
+
+    <div class="quiz-progress-bar-wrap">
+      <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
+    </div>
+
+    <div class="quiz-counter" id="quiz-counter">SOAL 1 / 20</div>
+
+    <div class="question-panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="q-number" id="q-number">SOAL 01</div>
+      <div class="q-text" id="q-text">—</div>
+      <div class="options-grid" id="options-grid"></div>
+    </div>
+
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="btn-next-q" id="btn-next-q" onclick="nextQuestion()">SOAL BERIKUTNYA →</button>
+  </div>
+
+  <!-- ── RESULT SCREEN ── -->
   <div id="result-screen">
     <div class="result-header">
       <span class="check">✅</span>
@@ -554,33 +878,34 @@ footer span {
           <span class="result-key">Hero Favorite</span>
           <span class="result-val" id="res-hero">—</span>
         </div>
+        <div class="result-row">
+          <span class="result-key">Skor Pengetahuan</span>
+          <span class="result-val" id="res-score">—</span>
+        </div>
       </div>
     </div>
 
     <div class="notice-box">
       <span class="notice-icon">📸</span>
       <p>
-        <strong>Screenshot formulir kamu diatas & baca intruksi ini!</strong><br>
+        <strong>Screenshot formulir kamu diatas &amp; baca instruksi ini!</strong><br>
         Kirim ke Owner SYZEN ID via WhatsApp dan tunggu konfirmasi.<br>
         Kamu akan dihubungi jika pendaftaran diterima/ditolak.
-        Kalau kamu diterima kamu akan diarahkan untuk melakukan TRIAL ke yang bertugas, Sebelum anda resmi menjadi anggota SYZEN ID!
-         <br>
-        Pastikan Anda masukan formulir anda dengan fakta/jujur, Kalau ada yang tidak benar maka pendaftaran anda ditolak!
-         <br>
-        Jika ditolak kamu terkena cooldown (tidak bisa mendaftar) selama 1 minggu, Jika mengulanginya lagi akan menjadi 1 bulan! dst (Dan Seterusnya).
-         <br>
-        Kami kasih kesempatan 3× untuk mendaftar ulang jika lebih dari lebih 3× kalian akan mendapatkan cooldown!
+        Kalau kamu diterima kamu akan diarahkan untuk melakukan TRIAL ke yang bertugas, Sebelum anda resmi menjadi anggota SYZEN ID!<br>
+        Pastikan Anda masukan formulir anda dengan fakta/jujur, Kalau ada yang tidak benar maka pendaftaran anda ditolak!<br>
+        Jika ditolak kamu terkena cooldown (tidak bisa mendaftar) selama 1 minggu, Jika mengulanginya lagi akan menjadi 1 bulan! dst (Dan Seterusnya).<br>
+        Kami kasih kesempatan 3× untuk mendaftar ulang jika lebih dari 3× kalian akan mendapatkan cooldown!
       </p>
     </div>
   </div>
 
 </div>
-</div><!-- /Copyright -->
 
 <footer>
   <p>© 2025 - 2026 SYZEN ID · All Rights Reserved</p>
   <p>Made by <span>RennzaiXD</span></p>
 </footer>
+
 <script>
 /* ─── FIRE PARTICLES ─── */
 (function(){
@@ -630,12 +955,9 @@ footer span {
 const LANE_IDS = ['cb-goldlane','cb-explaner','cb-midlane','cb-roam','cb-jungler'];
 const cbAll    = document.getElementById('cb-allrole');
 
-// Centang "All Role" → centang semua lane
 cbAll.addEventListener('change', function(){
   LANE_IDS.forEach(id => document.getElementById(id).checked = this.checked);
 });
-
-// Salah satu lane berubah → cek apakah semua sudah tercentang
 LANE_IDS.forEach(id => {
   document.getElementById(id).addEventListener('change', function(){
     cbAll.checked = LANE_IDS.every(i => document.getElementById(i).checked);
@@ -643,18 +965,47 @@ LANE_IDS.forEach(id => {
 });
 
 function getRoleString(){
-  // Kalau semua lane tercentang ATAU cb-allrole tercentang → All Role
   const isAll = cbAll.checked || LANE_IDS.every(id => document.getElementById(id).checked);
   if(isAll) return 'All Role';
-
   const picked = LANE_IDS
     .filter(id => document.getElementById(id).checked)
     .map(id => document.getElementById(id).value);
-
   return picked.length > 0 ? picked.join(' / ') : null;
 }
 
-/* ─── SUBMIT ─── */
+/* ─── QUIZ DATA ─── */
+const QUIZ = [
+  { q: "Item Counter HP Regen/Shield yang tepat?", opts: ["Malefic Roar","Sea Halberd / Necklace of Durance","Corrosion Scythe","Blade of Despair"], ans: 1 },
+  { q: "Strategi makro terbaik saat kalah posisi & lawan akan ambil Lord?", opts: ["Langsung menabrak area Lord meskipun posisi kalah gold","Menunggu di base tanpa melakukan apa-apa","Melakukan push di lane terjauh dari Lord (Split Push)","Semua anggota tim mencoba mencuri Lord satu per satu"], ans: 2 },
+  { q: "Fungsi utama Twilight Armor (Revamp)?", opts: ["Mengurangi burst damage fisik yang diterima dalam satu serangan besar","Memberikan efek immune terhadap semua jenis crowd control","Meningkatkan magic defense secara signifikan","Memberikan pantulan damage (damage reflection)"], ans: 0 },
+  { q: "Waktu tepat melakukan 'Freeze Lane'?", opts: ["Saat musuh sedang berkumpul di satu lane","Saat Gold Laner tim sudah unggul jauh dan ingin menutup akses farming lawan","Saat turret sendiri sudah hancur semua","Di menit-menit awal saat semua lane masih seimbang"], ans: 1 },
+  { q: "Kegunaan Winter Truncheon?", opts: ["Menghindari burst damage dan skill mematikan musuh dalam waktu singkat","Menghindari efek slow dari musuh","Menghindari pengurangan Mana","Menghindari kecepatan gerak lawan"], ans: 0 },
+  { q: "Kegunaan strategi 'Cut Lane'?", opts: ["Menunggu lawan di semak-semak untuk melakukan gank","Menghancurkan turret tanpa bantuan minion","Memberikan gold kepada teman satu tim","Membersihkan minion di belakang turret lawan agar bisa rotasi lebih cepat"], ans: 3 },
+  { q: "Sepatu yang tepat untuk melawan banyak Crowd Control (CC)?", opts: ["Warrior Boots","Tough Boots","Magic Shoes","Swift Boots"], ans: 1 },
+  { q: "Pengertian 'Backdoor' dalam MLBB?", opts: ["Menghancurkan base musuh tanpa keberadaan minion di area tersebut","Menyerang musuh dari arah belakang saat teamfight","Mencuri buff biru atau merah milik lawan","Kembali ke base untuk mengisi darah"], ans: 0 },
+  { q: "Durasi aktif Wind of Nature (WoN) untuk hero NON-Marksman?", opts: ["2 Detik","0.5 Detik","1 Detik","3 Detik"], ans: 2 },
+  { q: "Waktu terbaik mengambil Enhanced Lord (Menit 12+)?", opts: ["Sesaat setelah musuh baru saja mengambil Turtle","Setelah berhasil mengeliminasi setidaknya 2-3 hero penting lawan","Saat semua lane tim kita sedang ditekan oleh minion lawan","Ketika darah semua anggota tim sedang sekarat"], ans: 1 },
+  { q: "Fungsi pasif Dominance Ice selain anti-regen?", opts: ["Mengurangi Attack Speed musuh di sekitar sebesar 30%","Memberikan shield tambahan saat darah di bawah 10%","Meningkatkan damage critical sebesar 20%","Memberikan efek stun saat diserang"], ans: 0 },
+  { q: "Item defense terbaik melawan Magic Damage berkelanjutan (DPS)?", opts: ["Athena's Shield","Oracle","Cursed Helmet","Radiant Armor"], ans: 3 },
+  { q: "Peran utama Midlaner di early game?", opts: ["Hanya diam di lane sampai level 15","Mengambil semua buff milik Jungler","Membersihkan minion dengan cepat dan melakukan rotasi","Menghancurkan turret musuh sendirian tanpa bantuan"], ans: 2 },
+  { q: "Keunggulan Malefic Roar di late game?", opts: ["Memberikan lifesteal yang sangat besar","Memberikan Physical Penetration berdasarkan Physical Defense lawan","Meningkatkan HP maksimal hero secara drastis","Membuat serangan dasar menjadi area (AoE)"], ans: 1 },
+  { q: "Tindakan Jungler saat terkena invade di menit awal?", opts: ["Terus mencoba memukul buff sendirian sampai mati","Meminta bantuan Roamer/Midlaner atau melakukan tukar buff di jungle lawan","Langsung menyerah (surrender)","Pergi ke lane dan mengambil minion teman"], ans: 1 },
+  { q: "Efek item Brute Force Breastplate Revamp?", opts: ["Memberikan Movement Speed, Defense, dan pengurangan durasi CC","Hanya memberikan tambahan Attack Speed","Menghilangkan seluruh cooldown skill saat mendapatkan kill","Memberikan efek invisible (menghilang)"], ans: 0 },
+  { q: "Tujuan 'Lord Dance'?", opts: ["Saat tim sudah pasti kalah dan ingin mengakhiri game cepat","Saat ingin memancing musuh keluar dari base untuk pick-off","Saat semua minion tim kita sudah masuk ke base musuh","Saat tidak ada satu pun hero musuh yang hidup"], ans: 1 },
+  { q: "Cooldown pasif item Immortal?", opts: ["120 Detik","180 Detik","210 Detik","300 Detik"], ans: 2 },
+  { q: "Fungsi utama 'Bush Check' bagi Roamer?", opts: ["Memastikan area aman untuk dilewati Core dan mencegah ambush","Mencari tempat untuk bersembunyi sepanjang game","Mengambil gold yang tersembunyi di rumput","Mencoba membunuh monster hutan lawan sendirian"], ans: 0 },
+  { q: "Counter item Blade Armor untuk hero physical?", opts: ["Hunter Strike","Blade of Heptaseas","Demon Hunter Sword","Haas's Claws atau Rose Gold Meteor (Lifesteal)"], ans: 3 }
+];
+
+const LETTERS = ['A','B','C','D'];
+
+/* ─── QUIZ STATE ─── */
+let currentQ = 0;
+let score = 0;
+let answered = false;
+let formData = {};
+
+/* ─── SUBMIT FORM ─── */
 function submitForm(){
   const namaAsli = document.getElementById('f-nama-asli').value.trim();
   const nickname = document.getElementById('f-nickname').value.trim();
@@ -665,17 +1016,21 @@ function submitForm(){
 
   const errEl = document.getElementById('err-msg');
 
-if(!namaAsli || !nickname || !role || !rankEl || !hero){
-  errEl.textContent = !namaAsli ? '⚠ Nama asli wajib diisi!' :
-                      !nickname ? '⚠  Nickname game wajib diisi!' :
-                      !role     ? '⚠ Pilih minimal satu role!' :
-                      !rankEl   ? '⚠ Pilih rank tertinggi kamu!' :
-                                  '⚠ Tulis hero favorite kamu!';
-  errEl.classList.add('show');
-  return;
-}
-errEl.classList.remove('show');
-  // Sembunyikan form, tampilkan loading
+  if(!namaAsli || !nickname || !role || !rankEl || !hero){
+    errEl.textContent = !namaAsli ? '⚠ Nama asli wajib diisi!' :
+                        !nickname ? '⚠ Nickname game wajib diisi!' :
+                        !role     ? '⚠ Pilih minimal satu role!' :
+                        !rankEl   ? '⚠ Pilih rank tertinggi kamu!' :
+                                    '⚠ Tulis hero favorite kamu!';
+    errEl.classList.add('show');
+    return;
+  }
+  errEl.classList.remove('show');
+
+  // Save form data
+  formData = { namaAsli, nickname, role, rank: rankEl.value, mlid, hero };
+
+  // Show loading
   document.getElementById('form-screen').style.display = 'none';
   document.getElementById('loading-screen').style.display = 'block';
   window.scrollTo({top:0, behavior:'smooth'});
@@ -697,15 +1052,147 @@ errEl.classList.remove('show');
     fillEl.style.width = Math.min((elapsed/10000)*100, 100)+'%';
     if(elapsed >= 10000){
       clearInterval(barTimer); clearInterval(msgTimer);
-      showResult(namaAsli, nickname, role, rankEl.value, mlid, hero);
+      // Show popup instead of going straight to result
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('popup-quiz').classList.add('show');
+      window.scrollTo({top:0, behavior:'smooth'});
     }
   }, 100);
 }
 
+/* ─── START QUIZ ─── */
+function startQuiz(){
+  document.getElementById('popup-quiz').classList.remove('show');
+  document.getElementById('quiz-screen').style.display = 'block';
+  currentQ = 0; score = 0;
+  renderQuestion();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderQuestion(){
+  const data = QUIZ[currentQ];
+  answered = false;
+
+  document.getElementById('q-number').textContent = 'SOAL ' + String(currentQ+1).padStart(2,'0');
+  document.getElementById('q-text').textContent   = data.q;
+  document.getElementById('quiz-counter').textContent = `SOAL ${currentQ+1} / ${QUIZ.length}`;
+  document.getElementById('quiz-progress-fill').style.width = ((currentQ/QUIZ.length)*100)+'%';
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.textContent = ''; fb.className = 'quiz-feedback';
+
+  const btnNext = document.getElementById('btn-next-q');
+  btnNext.classList.remove('show');
+  btnNext.textContent = currentQ < QUIZ.length-1 ? 'SOAL BERIKUTNYA →' : 'LIHAT SKOR KAMU →';
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+
+  data.opts.forEach((opt, i) => {
+    const id = `opt-${currentQ}-${i}`;
+    const inp = document.createElement('input');
+    inp.type = 'radio'; inp.name = `q${currentQ}`; inp.id = id; inp.className = 'opt-radio'; inp.value = i;
+    inp.addEventListener('change', () => handleAnswer(i));
+
+    const lbl = document.createElement('label');
+    lbl.htmlFor = id;
+    lbl.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span>${opt}`;
+
+    grid.appendChild(inp); grid.appendChild(lbl);
+  });
+}
+
+function handleAnswer(chosen){
+  if(answered) return;
+  answered = true;
+
+  const data = QUIZ[currentQ];
+  const isCorrect = chosen === data.ans;
+  if(isCorrect) score++;
+
+  // Color the options
+  const labels = document.querySelectorAll(`label[for^="opt-${currentQ}-"]`);
+  labels.forEach((lbl, i) => {
+    const radioId = `opt-${currentQ}-${i}`;
+    document.getElementById(radioId).disabled = true;
+    if(i === data.ans)     lbl.classList.add('correct');
+    if(i === chosen && !isCorrect) lbl.classList.add('wrong');
+  });
+
+  // Feedback
+  const fb = document.getElementById('quiz-feedback');
+  if(isCorrect){
+    fb.textContent = '✅ BENAR! +1 POIN';
+    fb.className = 'quiz-feedback correct-fb';
+  } else {
+    fb.textContent = `❌ SALAH! Jawaban benar: ${LETTERS[data.ans]}`;
+    fb.className = 'quiz-feedback wrong-fb';
+  }
+
+  document.getElementById('btn-next-q').classList.add('show');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ >= QUIZ.length){
+    showScorePopup();
+  } else {
+    renderQuestion();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+/* ─── SCORE POPUP ─── */
+function showScorePopup(){
+  document.getElementById('quiz-progress-fill').style.width = '100%';
+
+  const popup = document.getElementById('score-popup');
+  const box   = document.getElementById('score-popup-box');
+  const numEl = document.getElementById('score-num');
+  const lblEl = document.getElementById('score-label');
+  const descEl= document.getElementById('score-desc');
+  const iconEl= document.getElementById('score-icon');
+
+  // Clear prev classes
+  box.className = 'score-popup-box';
+
+  let tier, cls, icon, desc;
+  if(score >= 20){
+    tier = 'Pro Player'; cls = 'score-pro'; icon = '🏆';
+    desc = 'Luar biasa! Pengetahuan ML kamu sempurna. Welcome to SYZEN ID!';
+    spawnConfetti();
+  } else if(score >= 15){
+    tier = 'Lumayan'; cls = 'score-lumayan'; icon = '😎';
+    desc = 'Cukup bagus! Pengetahuanmu solid, masih ada ruang untuk berkembang.';
+  } else if(score >= 10){
+    tier = 'Ok'; cls = 'score-ok'; icon = '👍';
+    desc = 'Oke! Pengetahuan dasar sudah ada, tapi perlu banyak belajar lagi.';
+  } else {
+    tier = 'Buruk'; cls = 'score-buruk'; icon = '💀';
+    desc = 'Masih perlu belajar banyak tentang Mobile Legends. Jangan menyerah!';
+  }
+
+  box.classList.add(cls);
+  iconEl.textContent = icon;
+  numEl.textContent  = score + '/20';
+  lblEl.textContent  = tier;
+  descEl.textContent = desc;
+
+  popup.classList.add('show');
+}
+
+/* ─── FINISH QUIZ → RESULT ─── */
+function finishQuiz(){
+  document.getElementById('score-popup').classList.remove('show');
+  document.getElementById('quiz-screen').style.display = 'none';
+  showResult();
+}
+
 /* ─── SHOW RESULT ─── */
-function showResult(namaAsli, nickname, role, rank, mlid, hero){
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('result-screen').style.display  = 'block';
+function showResult(){
+  const { namaAsli, nickname, role, rank, mlid, hero } = formData;
+
+  document.getElementById('result-screen').style.display = 'block';
   window.scrollTo({top:0, behavior:'smooth'});
 
   document.getElementById('res-nama').textContent = namaAsli;
@@ -716,12 +1203,46 @@ function showResult(namaAsli, nickname, role, rank, mlid, hero){
 
   const resId = document.getElementById('res-id');
   if(mlid){
-  resId.textContent = mlid;
-  resId.className = 'result-val';
-} else {
-  resId.textContent = '🔒 Secret';
-  resId.className = 'result-val secret';
+    resId.textContent = mlid;
+    resId.className   = 'result-val';
+  } else {
+    resId.textContent = '🔒 Secret';
+    resId.className   = 'result-val secret';
+  }
+
+  // Score label in result
+  const resScore = document.getElementById('res-score');
+  let scoreTier, scoreClass;
+  if(score >= 20){
+    scoreTier = `Pro Player (${score})`; scoreClass = 'result-val skor-pro';
+  } else if(score >= 15){
+    scoreTier = `Lumayan (${score})`;   scoreClass = 'result-val skor-lumayan';
+  } else if(score >= 10){
+    scoreTier = `Ok (${score})`;        scoreClass = 'result-val skor-ok';
+  } else {
+    scoreTier = `Buruk (${score})`;     scoreClass = 'result-val skor-buruk';
+  }
+  resScore.textContent = scoreTier;
+  resScore.className   = scoreClass;
 }
+
+/* ─── CONFETTI ─── */
+function spawnConfetti(){
+  const wrap = document.getElementById('confetti-wrap');
+  wrap.innerHTML = '';
+  const colors = ['#FFD700','#FFA500','#FF6B00','#FFEC00','#FFF'];
+  for(let i=0; i<80; i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.width  = (6+Math.random()*8)+'px';
+    p.style.height = (6+Math.random()*8)+'px';
+    p.style.animationDuration = (1.5+Math.random()*2)+'s';
+    p.style.animationDelay   = (Math.random()*1.2)+'s';
+    wrap.appendChild(p);
+  }
+  setTimeout(()=>{ wrap.innerHTML=''; }, 4000);
 }
 </script>
 </body>
